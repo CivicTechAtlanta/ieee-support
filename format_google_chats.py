@@ -6,6 +6,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics 
 from reportlab.lib import colors 
 from urllib import request
+import chardet
+
+# chardet.detect()
 
 original_message_path = "messages.json"
 
@@ -25,7 +28,7 @@ def load_file(path):
     '''
 
     # sys.version_info()
-    f = open(path)
+    f = open(path, encoding="utf-8")
     
     # returns JSON object as a dictionary
     data = json.load(f)
@@ -50,7 +53,7 @@ pdf.setFont("Courier-Bold", 24)
 pdf.drawCentredString(290, 720, subtitle) 
 pdf.line(30, 710, 550, 710)
 
-initial_text_spacing = 650
+initial_text_spacing = 700
 
 def text_handler(message: dict) -> int:
     text_handler = pdf.beginText(40, initial_text_spacing) 
@@ -64,16 +67,19 @@ def text_handler(message: dict) -> int:
     pdf.drawText(text_handler)
     return text_handler.getY()
 
+
 def img_handler(message: dict) -> int:
     image_url = message["annotations"][0]["url_metadata"]["image_url"]
     print(f"image_url : {image_url}")
     result = pdf.drawImage(image_url, 200, initial_text_spacing)
     print(f"img_handler : {result}")
     return result
+    # return 1
     
 
 def unsupported_handler(message: dict):
     print(f"Cannot support the following message. Skipping : {message}")
+    return 10
 
 def get_message_type(message : dict) -> str:
     is_text = "text" in message
@@ -106,12 +112,11 @@ for message in file_data:
     placement_result = message_handler(message=message)
 
     if message_type != 'img':
-        initial_text_spacing -= placement_result - 10
+        initial_text_spacing -= (placement_result - 10)
+        pdf.showPage()
     else:
-        initial_text_spacing -= 100
+        initial_text_spacing -= (placement_result[1] - 10)
 
-
-    # if initial_text_spacing >
 
 
 try:
