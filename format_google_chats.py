@@ -50,14 +50,14 @@ pdf = canvas.Canvas(file_name)
 pdf.setTitle(document_title) 
 pdf.setFillColorRGB(0, 0, 255) 
 pdf.setFont("Courier-Bold", 24) 
-pdf.drawCentredString(290, 720, subtitle) 
+pdf.drawCentredString(290, 720, subtitle)
 pdf.line(30, 710, 550, 710)
 
 initial_text_spacing = 700
 
 def text_handler(message: dict) -> int:
-    text_handler = pdf.beginText(40, initial_text_spacing) 
-    text_handler.setFont("Courier", 10) 
+    text_handler = pdf.beginText(40, initial_text_spacing)
+    text_handler.setFont("Courier", 10)
     text_handler.setFillColor(colors.black)
     author_name = message["creator"]["name"]
     author_mail = message["creator"]["email"]
@@ -67,14 +67,31 @@ def text_handler(message: dict) -> int:
     pdf.drawText(text_handler)
     return text_handler.getY()
 
+def get_y_img_placement() -> int:
+    print(f"initial_text_spacing : {initial_text_spacing}")
+    new_y = 800 - initial_text_spacing 
+    print(f"New Y : {new_y}")
+    return new_y
+
 
 def img_handler(message: dict) -> int:
     image_url = message["annotations"][0]["url_metadata"]["image_url"]
-    print(f"image_url : {image_url}")
-    result = pdf.drawImage(image_url, 200, initial_text_spacing)
+    text_handler = pdf.beginText(40, initial_text_spacing)
+    text_handler.setFont("Courier", 10)
+    text_handler.setFillColor(colors.black)
+    author_name = message["creator"]["name"]
+    author_mail = message["creator"]["email"]
+    formatted_text = f"{author_name} - {author_mail} : (IMAGE)"
+    text_handler.textLine(formatted_text)
+    pdf.drawText(text_handler)
+    print(f"image_url : {image_url} ")
+    y_img_placement = get_y_img_placement()
+    result = pdf.drawImage(image_url, 150, y_img_placement, height=200, preserveAspectRatio=True)
     print(f"img_handler : {result}")
-    return result
-    # return 1
+    # return result
+    return y_img_placement
+
+    # pass
     
 
 def unsupported_handler(message: dict):
@@ -111,11 +128,20 @@ for message in file_data:
 
     placement_result = message_handler(message=message)
 
+    print(f"placement_result : {placement_result}")
+
+    print(f"initial_text_spacing 1: {initial_text_spacing}")
+
+
     if message_type != 'img':
-        initial_text_spacing -= (placement_result - 10)
-        pdf.showPage()
+        initial_text_spacing -= 10
     else:
-        initial_text_spacing -= (placement_result[1] - 10)
+        initial_text_spacing -= placement_result
+
+    if initial_text_spacing < 100:
+        pdf.showPage()
+        initial_text_spacing = 800
+
 
 
 
