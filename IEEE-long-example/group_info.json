@@ -1,0 +1,25 @@
+{
+  "name": "example",
+  "members": [
+    {
+      "name": "Jake Derry",
+      "email": "jakederry1998@gmail.com",
+      "user_type": "Human"
+    },
+    {
+      "name": "Dillon Wintz",
+      "email": "dillon@civictechatlanta.org",
+      "user_type": "Human"
+    },
+    {
+      "name": "K Tokuda",
+      "email": "ktokudak@gmail.com",
+      "user_type": "Human"
+    },
+    {
+      "name": "Derrick Zhen",
+      "email": "dzhen001@gmail.com",
+      "user_type": "Human"
+    }
+  ]
+}
