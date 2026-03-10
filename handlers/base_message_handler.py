@@ -13,6 +13,7 @@ class BaseMessageHandler(ABC):
     def __init__(self, pdf_handler : PDFHandler, message : dict[str, str]) -> None:
         self.pdf_handler = pdf_handler
         self.message = message
+        self.error_reason = None
 
     def handle_pagination(self) -> None:
         if self.pdf_handler.pos_y < self.pdf_handler.maximum_y_position:
